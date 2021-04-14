@@ -1,10 +1,10 @@
 import { Box, Button, TextField } from "@material-ui/core";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { login } from "../actions/userActions";
-import firebase from '../utils/firebase';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import firebase from "../utils/firebase";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 
 function Login() {
   const uiConfig = {
@@ -13,15 +13,23 @@ function Login() {
     // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
     signInSuccessUrl: "/signedIn",
     // We will display Google and Facebook as auth providers.
-    signInOptions: [
-      firebase.auth.PhoneAuthProvider.PROVIDER_ID
-    ],
+    signInOptions: [firebase.auth.PhoneAuthProvider.PROVIDER_ID],
   };
 
   let dispatch = useDispatch();
+
   let history = useHistory();
 
   let user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      dispatch(login(user));
+      if(user){
+        history.push("/home");
+      }
+    });
+  }, []);
 
 
   return (
@@ -33,10 +41,21 @@ function Login() {
         width: "100%",
         height: "100vh",
       }}
-
     >
-
-<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
+      {user ? (
+        <Button
+          onClick={() => {
+            firebase.auth().signOut();
+          }}
+        >
+          Logout
+        </Button>
+      ) : (
+        <StyledFirebaseAuth
+          uiConfig={uiConfig}
+          firebaseAuth={firebase.auth()}
+        />
+      )}
     </Box>
   );
 }
