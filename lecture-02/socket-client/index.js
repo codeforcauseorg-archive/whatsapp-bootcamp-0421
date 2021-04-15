@@ -1,6 +1,10 @@
 let ioclient = require("socket.io-client");
 
-let io = ioclient("http://localhost:6000");
+let io = ioclient("http://localhost:8000",{
+  extraHeaders: {
+    Authorization: `Bearer happy`
+  }
+});
 
 io.on("connect", function () {
   setInterval(function () {
