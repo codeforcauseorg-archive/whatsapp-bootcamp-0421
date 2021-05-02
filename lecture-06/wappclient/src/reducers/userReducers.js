@@ -1,9 +1,11 @@
 import produce from "immer";
 
-import { LOGIN, LOGOUT } from "../actions/userActions";
+import { LOGIN, LOGOUT, SETCHAT, SETSOCKET } from "../actions/userActions";
 
 const initial = {
   user: undefined,
+  contact: undefined,
+  socket: undefined
 };
 
 const accReducer = (state = initial, action) => {
@@ -17,6 +19,18 @@ const accReducer = (state = initial, action) => {
     case LOGOUT: {
       return produce(state, (draft) => {
         draft.user = null;
+      });
+    }
+    case SETCHAT: {
+      let payload = action.payload;
+      return produce(state, (draft) => {
+        draft.contact = payload;
+      });
+    }
+    case SETSOCKET: {
+      let payload = action.payload;
+      return produce(state, (draft) => {
+        draft.socket = payload;
       });
     }
     default: {

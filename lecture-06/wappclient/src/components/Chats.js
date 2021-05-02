@@ -1,5 +1,5 @@
 import { Box, Toolbar, AppBar } from "@material-ui/core";
-import Contacts from './Contacts'
+import Contacts from './Contacts';
 
 
 function Chats() {

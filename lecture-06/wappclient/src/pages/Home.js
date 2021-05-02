@@ -8,9 +8,12 @@ import Chats from "../components/Chats";
 import firebase from "../utils/firebase";
 import ioclient from "socket.io-client";
 
+import { setSocket } from "../actions/userActions";
+
 function Home() {
   let user = useSelector((state) => state.user);
-
+  let contact = useSelector((state) => state.contact);
+  let dispatch = useDispatch();
   let history = useHistory();
 
   // console.log(firebase.auth().currentUser.getIdToken());
@@ -24,20 +27,19 @@ function Home() {
       console.log(token);
       console.log(user.displayName);
 
-      let socket = ioclient("http://localhost:8000",{
+      let socket = ioclient("http://localhost:8000", {
         extraHeaders: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       socket.on("connect", function () {
-        setInterval(function () {
-          socket.emit("message", "Hello from client");
-        }, 3000);
+        dispatch(setSocket(socket));
 
         socket.on("message", function (content) {
           console.log(content);
         });
+        
       });
     });
   }, []);
@@ -51,7 +53,7 @@ function Home() {
       }}
     >
       <Chats />
-      <ChatDetails />
+      {contact ? <ChatDetails /> : undefined}
     </Box>
   );
 }

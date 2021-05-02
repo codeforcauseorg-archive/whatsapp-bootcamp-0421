@@ -25,21 +25,24 @@ function Login() {
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       dispatch(login(user));
-      if(user){
-        if(!user.displayName){
+      if (user) {
+        if (!user.displayName) {
           var displayName = prompt("Please enter your name", "Unnamed");
-          user.updateProfile({
-            displayName
-          });
-          history.push("/");
+          user
+            .updateProfile({
+              displayName,
+            })
+            .then(function (user) {
+              console.log(firebase.auth().currentUser);
+              dispatch(login(user));
+              history.push("/");
+            });
         } else {
           history.push("/");
         }
-        
       }
     });
   }, []);
-
 
   return (
     <Box
